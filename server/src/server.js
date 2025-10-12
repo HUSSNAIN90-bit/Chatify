@@ -21,10 +21,13 @@ app.use("/api/message", messageRoutes);
 if(process.env.NODE_ENV === "production"){
     app.use(express.static(path.join(__dirname, "../client/dist")));
 
-    app.get("*", (_, res) => {
-        res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+    // Use a regex route to catch all remaining requests.
+    // Using a string like '/*' can be parsed by path-to-regexp as a param with a
+    // missing name (e.g. '/:name*' without the name). A regex avoids that parser
+    // quirk and reliably matches any path for client-side routing.
+    app.get(/.*/, (req, res) => {
+        res.sendFile(path.join(__dirname, "../client","dist","index.html"));
     });
-
 }
 
 app.listen(PORT, () => {
