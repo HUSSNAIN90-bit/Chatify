@@ -1,4 +1,4 @@
-import { resendClient, sender } from "../config/resend.js";
+import { resendClient, sender } from "../lib/resend.js";
 import { createWellcomeEmailTemplate } from "./emialTemplates.js";
 
 

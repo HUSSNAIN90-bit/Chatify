@@ -47,12 +47,13 @@ export const signup = async (req, res) => {
       });
 
       // Send welcome email
-      try{
-        await sendWelcomeEmail(savedUser.email, savedUser.fullName, process.env.CLIENT_URL);
-      }catch (error){
-
-      }
-
+      try {
+        await sendWelcomeEmail(
+          savedUser.email,
+          savedUser.fullName,
+          process.env.CLIENT_URL
+        );
+      } catch (error) {}
     } else {
       return res.status(400).json({ message: "Invalid user data" });
     }
@@ -78,17 +79,39 @@ export const login = async (req, res) => {
         email: user.email,
         profilePic: user.profilePic || "",
       });
-    }else {
+    } else {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-
-  }catch (err) {
+  } catch (err) {
     console.error("Error in Login controller", err);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 export const logout = (_, res) => {
-  res.cookie("token", "", {maxAge: 0});
+  res.cookie("token", "", { maxAge: 0 });
   res.status(200).json({ message: "Logged out successfully" });
-}
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { profilePic } = req.body;
+    if (!profilePic) {
+      return res.status(400).json({ message: "Profile picture is required" });
+    }
+    const userId = req.user._id;
+
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
