@@ -1,10 +1,20 @@
-import React from "react";
-import { Routes, Route } from "react-router";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router";
 import ChatPage from "./pages/ChatPage";
+import { useAuthStore } from "./stores/useAuthStore";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import PageLoader from "./components/PageLoader";
 
 const App = () => {
+  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+  
+  if(isCheckingAuth) return <PageLoader />
+  
   return (
     <div className="min-h-screen bg-slate-900 relative flex items-center justify-center p-4 overflow-hidden">
       {/* DECORATORS - GRID BG & GLOW SHAPES */}
@@ -13,9 +23,18 @@ const App = () => {
       <div className="absolute bottom-0 -right-4 size-96 bg-cyan-500 opacity-20 blur-[100px]" />
 
       <Routes>
-        <Route path="/" element={<ChatPage />} />
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/signup" element={<SignUp />} />
+        <Route
+          path="/"
+          element={authUser ? <ChatPage /> : <Navigate to="/auth/login" />}
+        />
+        <Route
+          path="/auth/login"
+          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/auth/signup"
+          element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
+        />
       </Routes>
     </div>
   );
