@@ -5,6 +5,7 @@ import { useAuthStore } from "./stores/useAuthStore";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import PageLoader from "./components/PageLoader";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -36,6 +37,7 @@ const App = () => {
           element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
         />
       </Routes>
+      <Toaster />
     </div>
   );
 };
