@@ -14,8 +14,8 @@ export default function LoginPage() {
       login(formData);
     };
   return (
-    <div className="w-full flex items-center justify-center bg-slate-900">
-      <div className="relative w-full max-w-6xl  h-[650px]">
+    <div className="w-full flex items-center justify-center h-full bg-slate-900">
+      <div className="relative w-full max-w-6xl  h-full">
         <BorderAnimatedContainer>
           <div className="w-full flex flex-col md:flex-row">
             {/* FORM CLOUMN - LEFT SIDE */}
@@ -74,7 +74,7 @@ export default function LoginPage() {
                 </form>
 
                 <div className="mt-6 text-center">
-                  <Link to="/signup" className="auth-link">
+                  <Link to="/auth/signup" className="auth-link">
                     Don't have an account? Sign up
                   </Link>
                 </div>
