@@ -1,18 +1,42 @@
-import React, { useEffect } from "react";
-import ChatHeader from "./ChatHeader";
-import { useChatStore } from "../stores/useChatStore";
+import { useEffect, useRef } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
+import { useChatStore } from "../stores/useChatStore";
+import ChatHeader from "./ChatHeader";
 import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceholder";
 import MessageInput from "./MessageInput";
 import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton";
 
-export default function ChatContainer() {
-  const { selectedUser, getMessagesByUserId, messages, isMessagesLoading } =
-    useChatStore();
+function ChatContainer() {
+  const {
+    selectedUser,
+    getMessagesByUserId,
+    messages,
+    isMessagesLoading,
+    // subscribeToMessages,
+    // unsubscribeFromMessages,
+  } = useChatStore();
   const { authUser } = useAuthStore();
+  const messageEndRef = useRef(null);
+
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
-  }, [selectedUser, getMessagesByUserId]);
+    // subscribeToMessages();
+
+    // clean up
+    // return () => unsubscribeFromMessages();
+  }, [
+    selectedUser,
+    getMessagesByUserId,
+    // subscribeToMessages,
+    // unsubscribeFromMessages,
+  ]);
+
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   return (
     <>
       <ChatHeader />
@@ -50,15 +74,19 @@ export default function ChatContainer() {
                 </div>
               </div>
             ))}
+            {/* 👇 scroll target */}
+            <div ref={messageEndRef} />
           </div>
         ) : isMessagesLoading ? (
           <MessagesLoadingSkeleton />
         ) : (
           <NoChatHistoryPlaceholder name={selectedUser.fullName} />
         )}
-
-        <MessageInput />
       </div>
+
+      <MessageInput />
     </>
   );
 }
+
+export default ChatContainer;
