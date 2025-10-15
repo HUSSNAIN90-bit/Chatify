@@ -1,6 +1,5 @@
 import {v2 as cloudinary} from "cloudinary";
 import "dotenv/config";
-import e from "express";
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
