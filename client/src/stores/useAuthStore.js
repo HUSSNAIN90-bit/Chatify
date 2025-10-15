@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
   authUser: null,
-  isChekingAuth: true,
+  isCheckingAuth: true,
   isSigningUp: false,
   isLoggingIn: false,
 
@@ -16,7 +16,7 @@ export const useAuthStore = create((set) => ({
       console.log("Error in checkAuth:", error);
       set({ authUser: null });
     } finally {
-      set({ isChekingAuth: false });
+      set({ isCheckingAuth: false });
     }
   },
   signup: async (Data) => {

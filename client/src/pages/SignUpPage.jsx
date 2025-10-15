@@ -15,8 +15,8 @@ function SignUpPage() {
   };
 
   return (
-    <div className="w-full flex items-center justify-center bg-slate-900">
-      <div className="relative w-full max-w-6xl  h-[650px]">
+    <div className="w-full flex items-center justify-center bg-slate-900 h-full">
+      <div className="relative w-full max-w-6xl  h-full">
         <BorderAnimatedContainer>
           <div className="w-full flex flex-col md:flex-row">
             {/* FORM CLOUMN - LEFT SIDE */}
@@ -90,7 +90,7 @@ function SignUpPage() {
                 </form>
 
                 <div className="mt-6 text-center">
-                  <Link to="/login" className="auth-link">
+                  <Link to="/auth/login" className="auth-link">
                     Already have an account? Login
                   </Link>
                 </div>
