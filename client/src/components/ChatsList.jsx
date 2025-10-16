@@ -11,7 +11,6 @@ function ChatsList() {
 
   useEffect(() => {
     getMyChatPartners();
-    console.log(onlineUsers);
   }, [getMyChatPartners]);
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
