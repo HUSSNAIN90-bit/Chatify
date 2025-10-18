@@ -6,6 +6,7 @@ import cors from "cors";
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import contactRoutes from "./routes/contact.route.js";
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 //Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/contacts",contactRoutes);
 
 //make ready for deployment
 if(process.env.NODE_ENV === "production"){

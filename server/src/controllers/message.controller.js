@@ -2,20 +2,7 @@ import User from "../models/User.js";
 import Message from "../models/Message.js";
 import cloudinary from "../lib/cloudinary.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
-
-export const getAllContacts = async (req, res) => {
-  try {
-    const loggedInUserId = req.user._id;
-    const fiteredUsers = await User.find({
-      _id: { $ne: loggedInUserId },
-    }).select("-password -email -createdAt -updatedAt -__v");
-
-    res.status(200).json(fiteredUsers);
-  } catch (err) {
-    res.status(500).json({ message: "Internal Server Error" });
-    console.error("Error in getAllContacts controller:", err);
-  }
-};
+import Contact from "../models/Contact.js"
 
 export const getMessagesByUserId = async (req, res) => {
   try {
@@ -80,10 +67,13 @@ export const sendMessage = async (req, res) => {
 export const getChatPartners = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
+
+    // Find all messages where the logged-in user is either sender or receiver
     const messages = await Message.find({
       $or: [{ senderId: loggedInUserId }, { reciverId: loggedInUserId }],
     });
 
+    // Extract unique chat partner IDs
     const chatPartnerIds = [
       ...new Set(
         messages.map((msg) =>
@@ -93,13 +83,36 @@ export const getChatPartners = async (req, res) => {
         )
       ),
     ];
+
+    // Get all chat partners (users)
     const chatPartners = await User.find({
       _id: { $in: chatPartnerIds },
     }).select("-password");
 
-    res.status(200).json(chatPartners);
+    // Get all contacts of the logged-in user
+    const userContacts = await Contact.find({ userId: loggedInUserId });
+
+    // Combine contacts and users
+    const result = chatPartners.map((partner) => {
+      const contact = userContacts.find(
+        (c) => c.contactId.toString() === partner._id.toString()
+      );
+
+      return {
+        _id: partner._id,
+        phoneNumber: partner.phoneNumber,
+        profilePic: partner.profilePic || "",
+        region: partner.region,
+        // 👇 use saved contact name if exists, else fall back to fullName
+        fullName: partner.fullName,
+        displayName: contact ? contact.name : undefined,
+        isContact: !!contact, // helpful for frontend
+      };
+    });
+
+    res.status(200).json(result);
   } catch (err) {
-    res.status(500).json({ message: "Internal Server Error" });
     console.error("Error in getChatPartners controller:", err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

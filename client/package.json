@@ -13,10 +13,13 @@
   "dependencies": {
     "axios": "^1.12.2",
     "chatify": "file:..",
+    "libphonenumber-js": "^1.12.24",
     "lucide-react": "^0.545.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-flags-select": "^2.5.0",
     "react-hot-toast": "^2.6.0",
+    "react-phone-input-2": "^2.15.1",
     "react-router": "^7.9.4",
     "socket.io-client": "^4.8.1",
     "zustand": "^5.0.8"
