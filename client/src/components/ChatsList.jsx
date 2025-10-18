@@ -18,7 +18,7 @@ function ChatsList() {
   }, [getMyChatPartners]);
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
-  if (chats.length === 0) return <NoChatsFound />;
+  if (chats.length == 0) return <NoChatsFound />;
 
   const formatPhoneNumber = (number, regionCode = "PK") => {
     try {
