@@ -11,6 +11,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    phoneNumber: {
+      type: Number,
+      required: true,
+      minLength: 11,
+      maxLength: 15,
+      unique: true,
+    },
+    region: {
+      type: String,
+      required: true,
+      default: "Pakistan",
+    },
     password: {
       required: true,
       type: String,

@@ -1,31 +1,37 @@
 import React, { useEffect } from "react";
-import { useChatStore } from "../stores/useChatStore";
+import { useContactStore } from "../stores/useContactStore";
 import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
 import { useAuthStore } from "../stores/useAuthStore";
 import NoChatsFound from "./NoChatsFound";
+import { useChatStore } from "../stores/useChatStore";
+import { PlusIcon } from "lucide-react";
 
 export default function ContactList() {
-  const { getAllContacts, allContacts, isUsersLoading, setSelectedUser } =
-    useChatStore();
+  const { getAllContacts, allContacts, isUsersLoading } = useContactStore();
+  const { setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
+    const {setContactAdd} = useContactStore();
   useEffect(() => {
     getAllContacts();
   }, [getAllContacts]);
   if (isUsersLoading) return <UsersLoadingSkeleton />;
-  if (chats.length === 0) return <NoChatsFound />;
+  if (allContacts.length === 0) return <NoChatsFound />;
   return (
     <>
       {" "}
       {allContacts.map((contact) => (
         <div
-          key={contact._id}
+          key={contact.contactId._id}
           className="bg-cyan-500/10 p-2 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition-colors"
-          onClick={() => setSelectedUser(contact)}
+          onClick={() =>
+            setSelectedUser({ name: contact.name, _id: contact.contactId._id })
+          }
         >
           <div className="flex items-center gap-3">
             <div
               className={`avatar ${
-                Array.isArray(onlineUsers) && onlineUsers.includes(contact._id)
+                Array.isArray(onlineUsers) &&
+                onlineUsers.includes(contact.contactId._id)
                   ? "online"
                   : "offline"
               }`}
@@ -33,16 +39,22 @@ export default function ContactList() {
               <div className="size-11 rounded-full">
                 <img
                   src={contact.profilePic || "/avatar.png"}
-                  alt={contact.fullName}
+                  alt={contact.name}
                 />
               </div>
             </div>
             <h4 className="text-slate-200 font-medium truncate">
-              {contact.fullName}
+              {contact.name}
             </h4>
           </div>
         </div>
       ))}
+      <button
+        onClick={() => setContactAdd()}
+        className="btn btn-circle bg-cyan-800 hover:bg-cyan-900 absolute bottom-5 right-5"
+      >
+        <PlusIcon />
+      </button>
     </>
   );
 }

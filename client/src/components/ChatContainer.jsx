@@ -23,7 +23,6 @@ function ChatContainer() {
     getMessagesByUserId(selectedUser._id);
     subscribeToMessages();
 
-    // clean up
     return () => unSubscribeFromMessages();
   }, [selectedUser, getMessagesByUserId,unSubscribeFromMessages,subscribeToMessages]);
 
@@ -73,6 +72,8 @@ function ChatContainer() {
           <NoChatHistoryPlaceholder name={selectedUser.fullName} />
         )}
       </div>
+
+      
 
       <MessageInput />
     </>

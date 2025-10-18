@@ -1,48 +1,90 @@
-import React from 'react'
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
 import BorderAnimatedContainer from "../components/BorderAnimatedContainer";
-import { MessageCircleIcon, LockIcon, MailIcon, UserIcon, LoaderIcon } from "lucide-react";
+import {
+  MessageCircleIcon,
+  LockIcon,
+  LoaderIcon,
+} from "lucide-react";
 import { Link } from "react-router";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 export default function LoginPage() {
-    const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
-    const { login, isLoggingIn } = useAuthStore();
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      login(formData);
-    };
+  const [formData, setFormData] = useState({
+    phoneNumber: "",
+    password: "",
+    region: "",
+  });
+
+  const { login, isLoggingIn } = useAuthStore();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formData.phoneNumber || !formData.password) {
+      alert("Please enter both phone number and password.");
+      return;
+    }
+
+    login(formData);
+  };
+
   return (
     <div className="w-full flex items-center justify-center h-full bg-slate-900">
-      <div className="relative w-full max-w-6xl  h-full">
+      <div className="relative w-full max-w-6xl h-full">
         <BorderAnimatedContainer>
           <div className="w-full flex flex-col md:flex-row">
-            {/* FORM CLOUMN - LEFT SIDE */}
+            {/* LEFT SIDE - FORM */}
             <div className="md:w-1/2 p-10 flex items-center justify-center md:border-r border-slate-600/30">
               <div className="w-full max-w-md">
-                {/* HEADING TEXT */}
+                {/* HEADING */}
                 <div className="text-center mb-8">
                   <MessageCircleIcon className="w-12 h-12 mx-auto text-slate-400 mb-4" />
-                  <h2 className="text-2xl font-bold text-slate-200 mb-2">Welcome Back</h2>
-                  <p className="text-slate-400">Login to access your account</p>
+                  <h2 className="text-2xl font-bold text-slate-200 mb-2">
+                    Welcome Back
+                  </h2>
+                  <p className="text-slate-400">
+                    Login to access your account
+                  </p>
                 </div>
 
                 {/* FORM */}
                 <form onSubmit={handleSubmit} className="space-y-6">
-
-                  {/* EMAIL INPUT */}
+                  {/* PHONE INPUT */}
                   <div>
-                    <label className="auth-input-label">Email</label>
+                    <label className="auth-input-label">Phone Number</label>
                     <div className="relative">
-                      <MailIcon className="auth-input-icon" />
-
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="input"
-                        placeholder="johndoe@gmail.com"
+                      <PhoneInput
+                        country={"pk"} // default country
+                        value={formData.phoneNumber}
+                        onChange={(phone, country) =>
+                          setFormData({
+                            ...formData,
+                            phoneNumber: phone,
+                            region: country.name, // store region name
+                          })
+                        }
+                        inputStyle={{
+                          width: "100%",
+                          backgroundColor: "transparent",
+                          border: "1px solid #334155",
+                          borderRadius: "0.5rem",
+                          paddingLeft: "48px",
+                          height: "45px",
+                          color: "#cbd5e1",
+                        }}
+                        buttonStyle={{
+                          border: "none",
+                          background: "none",
+                        }}
+                        dropdownStyle={{
+                          backgroundColor: "#1e293b",
+                          color: "#cbd5e1",
+                        }}
+                        enableSearch={true}
+                        disableDropdown={false}
+                        countryCodeEditable={false}
                       />
                     </div>
                   </div>
@@ -52,36 +94,45 @@ export default function LoginPage() {
                     <label className="auth-input-label">Password</label>
                     <div className="relative">
                       <LockIcon className="auth-input-icon" />
-
                       <input
                         type="password"
                         value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            password: e.target.value,
+                          })
+                        }
                         className="input"
                         placeholder="Enter your password"
+                        required
                       />
                     </div>
                   </div>
 
                   {/* SUBMIT BUTTON */}
-                  <button className="auth-btn" type="submit" disabled={isLoggingIn}>
+                  <button
+                    className="auth-btn"
+                    type="submit"
+                    disabled={isLoggingIn}
+                  >
                     {isLoggingIn ? (
                       <LoaderIcon className="w-full h-5 animate-spin text-center" />
                     ) : (
-                      "Sign in"
+                      "Sign In"
                     )}
                   </button>
                 </form>
 
                 <div className="mt-6 text-center">
                   <Link to="/auth/signup" className="auth-link">
-                    Don't have an account? Sign up
+                    Don’t have an account? Sign up
                   </Link>
                 </div>
               </div>
             </div>
 
-            {/* FORM ILLUSTRATION - RIGHT SIDE */}
+            {/* RIGHT SIDE - IMAGE */}
             <div className="hidden md:w-1/2 md:flex items-center justify-center p-10 bg-gradient-to-bl from-slate-800/20 to-transparent">
               <div>
                 <img
@@ -90,12 +141,14 @@ export default function LoginPage() {
                   className="w-full h-auto object-contain"
                 />
                 <div className="mt-6 text-center">
-                  <h3 className="text-xl font-medium text-cyan-400">Connect Anytime, Anywhere</h3>
+                  <h3 className="text-xl font-medium text-cyan-400">
+                    Connect Anytime, Anywhere
+                  </h3>
 
                   <div className="mt-4 flex justify-center gap-4">
                     <span className="auth-badge">Secure</span>
                     <span className="auth-badge">Fast</span>
-                    <span className="auth-badge">Reiable</span>
+                    <span className="auth-badge">Reliable</span>
                   </div>
                 </div>
               </div>
@@ -104,5 +157,5 @@ export default function LoginPage() {
         </BorderAnimatedContainer>
       </div>
     </div>
-  )
+  );
 }

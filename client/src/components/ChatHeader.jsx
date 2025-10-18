@@ -2,6 +2,7 @@ import { XIcon } from "lucide-react";
 import { useChatStore } from "../stores/useChatStore";
 import { useEffect } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
@@ -21,6 +22,26 @@ function ChatHeader() {
     return () => window.removeEventListener("keydown", handleEscKey);
   }, [setSelectedUser]);
 
+  const formatPhoneNumber = (number, regionCode = "PK") => {
+    try {
+      const cleanNumber = number?.toString().trim();
+
+      const phoneNumber = parsePhoneNumberFromString(
+        `+${cleanNumber}`,
+        regionCode.toUpperCase()
+      );
+
+      if (phoneNumber && phoneNumber.isValid()) {
+        return phoneNumber.formatInternational(); 
+      }
+
+      return `+${cleanNumber}`;
+    } catch (err) {
+      console.error("Phone format error:", err);
+      return `+${number}`;
+    }
+  };
+
   return (
     <div
       className="flex justify-between items-center bg-slate-800/50 border-b
@@ -31,14 +52,21 @@ function ChatHeader() {
           <div className="w-12 rounded-full">
             <img
               src={selectedUser.profilePic || "/avatar.png"}
-              alt={selectedUser.fullName}
+              alt={
+                selectedUser.name ? selectedUser.name : selectedUser.fullName
+              }
             />
           </div>
         </div>
 
         <div>
           <h3 className="text-slate-200 font-medium">
-            {selectedUser.fullName}
+            {selectedUser.displayName
+              ? selectedUser.displayName
+              : formatPhoneNumber(
+                  selectedUser.phoneNumber,
+                  selectedUser.region
+                )}
           </h3>
           <p className="text-slate-400 text-sm">
             {isOnline ? "Online" : "Offline"}
