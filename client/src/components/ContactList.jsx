@@ -15,7 +15,7 @@ export default function ContactList() {
     getAllContacts();
   }, [getAllContacts]);
   if (isUsersLoading) return <UsersLoadingSkeleton />;
-  if (allContacts.length === 0) return <NoChatsFound />;
+  if (allContacts.length == 0) return <NoChatsFound />;
   return (
     <>
       {" "}
