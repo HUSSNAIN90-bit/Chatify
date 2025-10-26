@@ -7,8 +7,18 @@ export const useContactStore = create((set, get) => ({
   isUsersLoading: false,
   isContactAdding: false,
   contactAdd: false,
+  contactFullName: "",
+  contactPhoneNumber: "",
 
-  setContactAdd: () => set({ contactAdd: !get().contactAdd }),
+  setContactAdd: () =>
+    set({
+      contactAdd: !get().contactAdd,
+      contactFullName: "",
+      contactPhoneNumber: "",
+    }),
+  setContactFullName: (name) => set({ contactFullName: name }),
+  setContactPhoneNumber: (phoneNumber) =>
+    set({ contactPhoneNumber: phoneNumber }),
 
   getAllContacts: async () => {
     set({ isUsersLoading: true });
@@ -27,7 +37,7 @@ export const useContactStore = create((set, get) => ({
       const contacts = get().allContacts;
       const res = await axiosInstance.post("/contacts/add", data);
       set({
-        allContacts: [...contacts , res.data.contact],
+        allContacts: [...contacts, res.data.contact],
       });
       toast.success(res.data.message);
       set({ contactAdd: false });

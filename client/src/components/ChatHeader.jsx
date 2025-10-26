@@ -1,12 +1,15 @@
-import { XIcon } from "lucide-react";
+import { Contact2Icon, ContactIcon, UserRoundPlus, XIcon } from "lucide-react";
 import { useChatStore } from "../stores/useChatStore";
 import { useEffect } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
+import { useContactStore } from "../stores/useContactStore";
 
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
+  const { setContactPhoneNumber, setContactFullName, setContactAdd } =
+    useContactStore();
   const isOnline = selectedUser?._id
     ? onlineUsers.includes(String(selectedUser._id))
     : false;
@@ -32,7 +35,7 @@ function ChatHeader() {
       );
 
       if (phoneNumber && phoneNumber.isValid()) {
-        return phoneNumber.formatInternational(); 
+        return phoneNumber.formatInternational();
       }
 
       return `+${cleanNumber}`;
@@ -61,7 +64,7 @@ function ChatHeader() {
 
         <div>
           <h3 className="text-slate-200 font-medium">
-            {selectedUser.displayName
+            {selectedUser.isContact
               ? selectedUser.displayName
               : formatPhoneNumber(
                   selectedUser.phoneNumber,
@@ -74,9 +77,23 @@ function ChatHeader() {
         </div>
       </div>
 
-      <button onClick={() => setSelectedUser(null)}>
-        <XIcon className="w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer" />
-      </button>
+      <div className="flex justify-center items-center gap-5">
+        {!selectedUser.isContact && (
+          <button
+            onClick={() => {
+              setContactAdd();
+              setContactFullName(selectedUser.fullName);
+              setContactPhoneNumber(selectedUser.phoneNumber);
+            }}
+          >
+            <UserRoundPlus className="w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer" />
+          </button>
+        )}
+
+        <button onClick={() => setSelectedUser(null)}>
+          <XIcon className="w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer" />
+        </button>
+      </div>
     </div>
   );
 }
