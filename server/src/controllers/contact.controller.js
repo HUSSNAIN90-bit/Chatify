@@ -57,7 +57,7 @@ export const getAllContacts = async (req, res) => {
     const userId = req.user._id;
 
     const contacts = await Contact.find({ userId })
-      .populate("contactId", "fullName name _id");
+      .populate("contactId", "fullName profilePic");
 
     res.status(200).json(contacts);
   } catch (err) {

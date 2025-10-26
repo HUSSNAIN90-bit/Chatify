@@ -5,12 +5,14 @@ import { useAuthStore } from "../stores/useAuthStore";
 import NoChatsFound from "./NoChatsFound";
 import { useChatStore } from "../stores/useChatStore";
 import { PlusIcon } from "lucide-react";
+import { connect } from "socket.io-client";
+import { PhoneNumber } from "libphonenumber-js";
 
 export default function ContactList() {
   const { getAllContacts, allContacts, isUsersLoading } = useContactStore();
   const { setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
-    const {setContactAdd} = useContactStore();
+  const { setContactAdd } = useContactStore();
   useEffect(() => {
     getAllContacts();
   }, [getAllContacts]);
@@ -24,7 +26,14 @@ export default function ContactList() {
           key={contact.contactId._id}
           className="bg-cyan-500/10 p-2 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition-colors"
           onClick={() =>
-            setSelectedUser({ name: contact.name, _id: contact.contactId._id })
+            setSelectedUser({
+              _id: contact.contactId._id,
+              displayName: contact.name,
+              phoneNumber: contact.phoneNumber,
+              fullName: contact.contactId.fullName,
+              profilePic: contact.contactId.profilePic,
+              isContact: true,
+            })
           }
         >
           <div className="flex items-center gap-3">
@@ -38,7 +47,7 @@ export default function ContactList() {
             >
               <div className="size-11 rounded-full">
                 <img
-                  src={contact.profilePic || "/avatar.png"}
+                  src={contact.contactId.profilePic || "/avatar.png"}
                   alt={contact.name}
                 />
               </div>

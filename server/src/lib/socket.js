@@ -1,7 +1,8 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
-import "dotenv/config"
+import Message from "../models/Message.js"
+import "dotenv/config";
 import { socketAuthMiddleware } from "../middlewares/socket.auth.middleware.js";
 
 const app = express();
@@ -17,8 +18,6 @@ const io = new Server(server, {
 // apply authentication middleware to all socket connections
 io.use(socketAuthMiddleware);
 
-
-
 // we will use this function to check if the user is online or not
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
@@ -28,8 +27,6 @@ export function getReceiverSocketId(userId) {
 const userSocketMap = {}; // {userId:socketId}
 
 io.on("connection", (socket) => {
-
-
   const userId = socket.userId;
   userSocketMap[userId] = socket.id;
 

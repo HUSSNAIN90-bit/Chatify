@@ -1,14 +1,15 @@
-import { CrossIcon, Loader, LoaderIcon, UserIcon, XIcon } from "lucide-react";
-import React, { useState } from "react";
+import {  LoaderIcon, UserIcon, XIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import { useContactStore } from "../stores/useContactStore";
 
 export default function AddToContact() {
+  const { setContactAdd, addContact, isContactAdding, contactPhoneNumber,contactFullName } =
+    useContactStore();
   const [formData, setFormData] = useState({
-    phoneNumber: "",
-    name: "",
+    phoneNumber: String(contactPhoneNumber),
+    name: contactFullName,
   });
-  const { setContactAdd, addContact, isContactAdding } = useContactStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -63,7 +64,8 @@ export default function AddToContact() {
                 }}
                 buttonStyle={{
                   border: "none",
-                  background: "none",
+                  background: "none]",
+                  
                 }}
                 dropdownStyle={{
                   backgroundColor: "#1e293b",

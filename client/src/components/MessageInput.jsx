@@ -1,5 +1,4 @@
-
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useKeyboardSound from "../hooks/useKeySound";
 import { useChatStore } from "../stores/useChatStore";
 import toast from "react-hot-toast";
@@ -11,8 +10,22 @@ function MessageInput() {
   const [imagePreview, setImagePreview] = useState(null);
 
   const fileInputRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const { sendMessage, isSoundEnabled } = useChatStore();
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    textarea.style.height = "auto";
+
+    // Limit max height to 5 lines
+    const maxHeight = parseInt(getComputedStyle(textarea).lineHeight) * 5;
+
+    textarea.style.height =
+      textarea.scrollHeight > maxHeight
+        ? `${maxHeight}px`
+        : `${textarea.scrollHeight}px`;
+  }, [text]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -66,15 +79,20 @@ function MessageInput() {
         </div>
       )}
 
-      <form onSubmit={handleSendMessage} className="max-w-3xl mx-auto flex space-x-4">
-        <input
+      <form
+        onSubmit={handleSendMessage}
+        className="max-w-3xl mx-auto flex space-x-4"
+      >
+        <textarea
           type="text"
           value={text}
+          ref={textareaRef}
+          rows={1}
           onChange={(e) => {
             setText(e.target.value);
             isSoundEnabled && playRandomKeySound();
           }}
-          className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-lg py-2 px-4"
+          className="flex-1 bg-slate-800/50 border resize-none border-slate-700/50 rounded-lg py-2 px-4 overflow-hidden"
           placeholder="Type your message..."
         />
 

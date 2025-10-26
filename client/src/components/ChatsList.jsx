@@ -5,13 +5,13 @@ import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
 import NoChatsFound from "./NoChatsFound";
 import { useAuthStore } from "../stores/useAuthStore";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-import { PlusIcon } from "lucide-react";
+import { CheckCheck, PlusIcon } from "lucide-react";
 
 function ChatsList() {
   const { getMyChatPartners, chats, isUsersLoading, setSelectedUser } =
     useChatStore();
-  const { onlineUsers } = useAuthStore();
-  const {setContactAdd} = useContactStore();
+  const { onlineUsers, authUser } = useAuthStore();
+  const { setContactAdd } = useContactStore();
 
   useEffect(() => {
     getMyChatPartners();
@@ -68,19 +68,37 @@ function ChatsList() {
                   />
                 </div>
               </div>
-              <h4 className="text-slate-200 font-medium truncate">
-                {chat.displayName
-                  ? chat.displayName
-                  : formatPhoneNumber(chat.phoneNumber, chat.region)}
-              </h4>
+              <div className="flex flex-col">
+                <h4 className="text-slate-200 font-medium truncate">
+                  {chat.displayName
+                    ? chat.displayName
+                    : formatPhoneNumber(chat.phoneNumber, chat.region)}
+                </h4>
+                <p className="text-xs flex  gap-1">
+                  <span>
+                    {chat.lastMessage.senderId === authUser._id && (
+                      <CheckCheck
+                        className={`size-4 ${
+                          chat.lastMessage.isReaded
+                            ? "text-green-500"
+                            : "text-gray-900"
+                        }`}
+                      />
+                    )}
+                  </span>
+                  {chat.lastMessage.text}
+                </p>
+              </div>
             </div>
           </div>
         );
       })}
-      <button onClick={()=>setContactAdd()} className="btn btn-circle bg-cyan-800 hover:bg-cyan-900 absolute bottom-5 right-5">
+      <button
+        onClick={() => setContactAdd()}
+        className="btn btn-circle bg-cyan-800 hover:bg-cyan-900 absolute bottom-5 right-5"
+      >
         <PlusIcon />
       </button>
-      
     </>
   );
 }
