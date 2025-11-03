@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+    import React, { useEffect, useRef } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useChatStore } from "../stores/useChatStore";
 import ChatHeader from "./ChatHeader";
@@ -14,39 +14,34 @@ function ChatContainer() {
     messages,
     markAsRead,
     isMessagesLoading,
-    subscribeToMessages,
-    unSubscribeFromMessages,
+    subscribeMessages,
+    unSubscribeMessages,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
-  // Realtime "isRead" logic: 
-  // - subscribe to both "newMessage" and "messagesRead" events once per chat.
-  // - if viewing a chat AND there are any unread messages (from the other), mark as read (once).
-  // - listen for others marking as read and update UI in real time.
   useEffect(() => {
     if (!selectedUser?._id) return;
 
     let didMarkRead = false;
     let readTimeout;
 
-    const setup = async () => {
+    const fetchAndSubscribe = async () => {
       await getMessagesByUserId(selectedUser._id);
-      subscribeToMessages();
+      subscribeMessages();
 
       // Only mark as read if there are unread incoming messages in this chat
       const hasUnreadIncoming = () => {
         return (
           Array.isArray(messages) &&
           messages.some(
-            m =>
+            (m) =>
               m.senderId === selectedUser._id &&
               !m.isReaded
           )
         );
       };
 
-      // Wait a little and then mark as read for UX (only if unread)
       readTimeout = setTimeout(async () => {
         if (!didMarkRead && hasUnreadIncoming()) {
           didMarkRead = true;
@@ -54,28 +49,24 @@ function ChatContainer() {
         }
       }, 800);
 
-      // Cleanup on chat change or unmount
       return () => {
         clearTimeout(readTimeout);
-        unSubscribeFromMessages();
+        unSubscribeMessages();
       };
     };
 
     let cleanup;
-
-    setup().then((cb) => {
+    fetchAndSubscribe().then((cb) => {
       cleanup = cb;
     });
 
     return () => {
       if (cleanup) cleanup();
-      else unSubscribeFromMessages();
+      else unSubscribeMessages();
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedUser]);
 
-  // When new messages arrive, if it's from the other user and not marked as read, mark as read
   useEffect(() => {
     if (
       !selectedUser?._id ||
@@ -89,7 +80,6 @@ function ChatContainer() {
       (m) => m.senderId === selectedUser._id && !m.isReaded
     );
     if (unread) {
-      // Small debounce to prevent spam if messages rapidly update
       const to = setTimeout(() => {
         markAsRead(selectedUser._id);
       }, 400);
@@ -97,7 +87,6 @@ function ChatContainer() {
     }
   }, [messages, selectedUser, markAsRead]);
 
-  // Auto scroll when new message arrives
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -111,7 +100,7 @@ function ChatContainer() {
         {isMessagesLoading ? (
           <MessagesLoadingSkeleton />
         ) : messages.length > 0 ? (
-          <div className="max-w-3xl mx-auto space-y-6">
+          <div className="w-full mx-auto space-y-6">
             {messages.map((msg) => (
               <div
                 key={msg._id}
@@ -154,7 +143,7 @@ function ChatContainer() {
             <div ref={messageEndRef} />
           </div>
         ) : (
-          <NoChatHistoryPlaceholder name={selectedUser.fullName} />
+          <NoChatHistoryPlaceholder name={selectedUser?.fullName} />
         )}
       </div>
       <MessageInput />

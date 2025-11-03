@@ -61,7 +61,7 @@ function MessageInput() {
   return (
     <div className="p-4 border-t border-slate-700/50">
       {imagePreview && (
-        <div className="max-w-3xl mx-auto mb-3 flex items-center">
+        <div className="w-full mx-auto mb-3 flex items-center">
           <div className="relative">
             <img
               src={imagePreview}
@@ -81,7 +81,7 @@ function MessageInput() {
 
       <form
         onSubmit={handleSendMessage}
-        className="max-w-3xl mx-auto flex space-x-4"
+        className="w-full mx-auto flex space-x-4"
       >
         <textarea
           type="text"
