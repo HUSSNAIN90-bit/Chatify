@@ -14,7 +14,7 @@ function ChatPage() {
   const {isSelectedUser} = useAuthStore();
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-[calc(100vw-64px)] h-[calc(100vh-64px)]  max-sm:w-full max-sm:h-full">
       <BorderAnimatedContainer>
         {/* LEFT SIDE */}
         <div className={`w-80 bg-slate-800/50 backdrop-blur-sm flex flex-col ${selectedUser ? "max-sm:hidden" : "max-sm:block max-sm:w-full"}`}>
